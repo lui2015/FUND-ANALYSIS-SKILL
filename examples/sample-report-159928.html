@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇添富中证主要消费ETF联接A 价值分析报告</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+         background: #f7f8fa; color: #1f2328; line-height: 1.75; padding: 24px 16px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06);
+          padding: 24px; margin-bottom: 20px; }
+  h1 { font-size: 26px; margin-bottom: 6px; letter-spacing: .3px; }
+  h2 { font-size: 20px; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #2563eb; }
+  h3 { font-size: 16px; margin: 16px 0 8px; }
+  h3:first-child { margin-top: 0; }
+  .sub { color: #5b6470; font-size: 14px; }
+  .up { color: #e63946; font-weight: 600; }
+  .down { color: #2a9d8f; font-weight: 600; }
+  .warn-bar { background: #fff4e5; border: 1px solid #f0b429; border-radius: 8px;
+              padding: 14px 16px; margin-bottom: 20px; font-size: 14px; color: #7a5200; }
+  .term { background: #fff8e1; border-left: 3px solid #f0b429; border-radius: 6px;
+          padding: 10px 14px; margin: 10px 0; font-size: 14px; color: #6b5400; }
+  .quote { border-left: 3px solid #94a3b8; padding-left: 14px; margin: 12px 0;
+           font-style: italic; color: #475569; font-size: 14px; }
+  .scorebox { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin: 18px 0 10px; }
+  .verdict { flex: 1; min-width: 240px; font-size: 17px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 16px; }
+  .metric { background: #f9fafb; border: 1px solid #eef1f4; border-radius: 8px; padding: 16px; }
+  .kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin: 14px 0; }
+  .kv div { background: #f9fafb; border-radius: 8px; padding: 12px 14px; }
+  .kv .k { font-size: 12px; color: #5b6470; }
+  .kv .v { font-size: 19px; font-weight: 700; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eceff3; }
+  th { background: #f4f6f8; font-weight: 600; }
+  ul { padding-left: 22px; } li { margin: 7px 0; }
+  .tag { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 20px;
+         background: #eef2ff; color: #3730a3; margin-left: 6px; vertical-align: middle; }
+  .foot { color: #7b8494; font-size: 12px; text-align: center; padding: 16px 0 30px; line-height: 1.9; }
+  .svgwrap { overflow-x: auto; }
+  @media (max-width: 600px) { h1 { font-size: 21px; } .card { padding: 18px; } body { padding: 14px 10px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card">
+    <h1>汇添富中证主要消费ETF联接A</h1>
+    <p class="sub">母基金 sz159928 消费ETF汇添富 ㆍ 标的指数 sh000932 中证主要消费 ㆍ 数据截至 2026-08-05</p>
+    <div class="scorebox">
+      <svg width="150" height="150" viewBox="0 0 150 150" aria-label="综合评分 62 分">
+        <circle cx="75" cy="75" r="58" fill="none" stroke="#eceff3" stroke-width="13"/>
+        <circle cx="75" cy="75" r="58" fill="none" stroke="#f0b429" stroke-width="13"
+                stroke-linecap="round" stroke-dasharray="226 364" transform="rotate(-90 75 75)"/>
+        <text x="75" y="79" text-anchor="middle" font-size="38" font-weight="700" fill="#1f2328">62</text>
+        <text x="75" y="101" text-anchor="middle" font-size="12" fill="#5b6470">综合评分 / 100</text>
+      </svg>
+      <div class="verdict">
+        <strong>档位：中性偏存疑</strong><span class="tag">不算坏，但没什么特别理由非买它</span>
+        <p style="margin-top:10px">它是一只<strong>老实巴交的工具</strong>——不挑股票、费率不高、规模够大、经理管了 11 年没换人。
+        问题不在产品，在它装的东西：<strong>一半仓位是白酒和猪</strong>，这两样一个看酒桌热不热闹，一个看猪价周期，
+        八竿子打不着，却被绑在同一只基金里。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-bar">
+    ⚠️ <strong>数据口径说明（请务必先读）</strong>：本机未配置恒生聚源数据接口（缺 JY_API_KEY），
+    因此<strong>拿不到这只联接基金 A 类份额自己的数据</strong>。报告改用它的<strong>母基金（消费ETF汇添富 sz159928）</strong>数据分析。
+    联接基金 90% 以上的钱都买了这只母基金，所以方向上靠得住，
+    但<strong>实际收益通常比母基金略低一点</strong>（一年大约差 0.1%~0.5%，因为它要留些现金应付赎回）。
+    另外<strong>同类排名、夏普比率、波动率这几项彻底拿不到</strong>，报告里凡是缺的都写了「数据缺失」，一个字都没编。
+  </div>
+
+  <div class="card">
+    <h2>先说结论</h2>
+    <ul>
+      <li><strong>你买的不是「消费复苏」，是「吃喝 + 养猪」。</strong>白酒占约 31.5%，养猪链占约 20.8%，两样加起来超过一半。
+          <strong>它完全不含</strong>家电、汽车、旅游、免税店、餐饮。想赌消费全面回暖的人，买它会买错。</li>
+      <li><strong>过去三年亏了 30.64%，最惨时亏 38.41%。</strong>这不是经理的错——它是指数基金，指数跌它就跌。</li>
+      <li><strong>现在价格便宜，但还不是最便宜。</strong>过去一年里只有 26% 的时间比现在更便宜，离一年内最高点还差 24.8%。</li>
+      <li><strong>7月刚放量涨了约 14.75%，是三年来最有力的一次反弹</strong>，但 8 月第一天就回落了，急着卖的人还是比急着买的多。
+          <span class="down">低位不等于底部，反弹不等于反转。</span></li>
+      <li><strong>如果你有股票账户，直接买母基金 sz159928 更省钱。</strong>场内买卖成本远低于这只联接基金 0.80% 的申购费。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>巴菲特的四把尺子</h2>
+    <div class="grid2">
+
+      <div class="metric">
+        <h3>① 能力圈 ⚠️存疑 <span class="tag">14 / 20</span></h3>
+        <p><strong>名字会骗人。</strong>「主要消费」听起来像"所有消费"，实际只有必需消费——再穷也得吃的东西。</p>
+        <p class="sub">数据：白酒约 31.5%、养猪链约 20.8%、乳制品 10.2%、调味品 5.5%。不含任何可选消费。</p>
+        <div class="term">💡 <strong>必需消费</strong>=油盐酱醋、猪肉、白酒，日子再难也得买。<br>
+        <strong>可选消费</strong>=汽车、旅游、免税店，有闲钱才买。这只基金<strong>只有前者</strong>。</div>
+        <div class="quote">"永远不要投资你看不懂的生意。"——扣分不是因为它复杂，而是因为<strong>它的名字容易让你以为自己看懂了</strong>。</div>
+      </div>
+
+      <div class="metric">
+        <h3>② 护城河 ⚠️ 一半一半 <span class="tag">13 / 20</span></h3>
+        <p><strong>白酒有护城河，猪没有。</strong>茅台涨价你还得买，猪肉涨价你就少吃点。</p>
+        <p class="sub">数据：茅台 9.83%、五粮液 9.03%、泸州老窖 5.88%（有定价权）；牧原 9.01%、温氏 6.35%、正邦 1.89%（纯周期）。</p>
+        <div class="term">💡 <strong>护城河</strong>=这家公司悄悄涨价，客户会不会跑？不跑的（茅台）有护城河，会跑的（猪肉）没有。</div>
+        <div class="quote">"我要的是被护城河保护的城堡。"——这座城堡<strong>一半是石头墙，一半是篱笆</strong>。</div>
+      </div>
+
+      <div class="metric">
+        <h3>③ 安全边际 ✅ 符合 <span class="tag">16 / 20</span></h3>
+        <p><strong>现在确实是打折价。</strong>但打折不代表马上涨。</p>
+        <p class="sub">数据：现价 ¥0.673，一年内区间 ¥0.593~¥0.895，处 <strong>26% 分位</strong>；指数 PE 20.5倍；净值 ¥0.6914，折溢价仅 +0.06%。</p>
+        <div class="term">💡 <strong>26% 分位</strong>=过去一年里，只有 26% 的日子比今天更便宜。<br>
+        <strong>PE 20.5 倍</strong>=按现在的赚钱速度，公司要 20 年才能把你的本金赚回来。<br>
+        <strong>折溢价 +0.06%</strong>=场上买价和它真实身价几乎一样，没吃亏也没占便宜。</div>
+        <div class="quote">"用四毛钱买一块钱的东西。"——现在大约是<strong>七毛五买一块</strong>，有折扣，但不算捡漏。</div>
+      </div>
+
+      <div class="metric">
+        <h3>④ 长期主义⚠️ 考验人性 <span class="tag">9 / 15</span></h3>
+        <p><strong>它成立13 年了，活得很稳。但它的波动会让大多数人拿不住。</strong></p>
+        <p class="sub">数据：成立 2013-08-23；规模 ¥161.38 亿；近 3 年 <span class="down">-30.64%</span>，最大回撤 <span class="down">-38.41%</span>；经理任职 11 年未换。</p>
+        <div class="term">💡 <strong>最大回撤 -38.41%</strong>=最惨的时候，你的 100 块变成 <strong>61.6 块</strong>。
+        而且要涨回 100 块，得赚 <strong>62.3%</strong>，不是 38.41%——<strong>亏钱和回本从来不对称</strong>。</div>
+        <div class="quote">"如果你不想持有十年，就不要持有十分钟。"——问题是：<strong>看着账户亏 38% 你还拿得住吗？</strong></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>芒格的三件武器</h2>
+
+    <h3>🔄 反过来想：最惨会怎样</h3>
+    <p>芒格不问"能赚多少"，他问"<strong>怎么会亏钱</strong>"。这只基金的最坏情况<strong>不用想象，已经发生过了</strong>：</p>
+    <ul>
+      <li>2025 年 9 月 ¥0.88 → 2026 年 6 月 ¥0.59，<strong>九个月跌 33%</strong></li>
+      <li>近三年最大回撤 <span class="down">-38.41%</span>，近三年累计 <span class="down">-30.64%</span></li>
+    </ul>
+    <p><strong>好消息是它有下限</strong>——这些公司是卖油盐酱醋和猪肉的，日子再差人也要吃饭，不会归零。
+    <strong>坏消息是下跌可以很久</strong>：三年了还没回来。</p>
+    <div class="term">💡 <strong>真正的风险不是亏 38%，是你在亏 38% 的那天把它卖了</strong>，然后错过后面的反弹。</div>
+
+    <h3>🧩 多元思维模型：一只基金，两套算法</h3>
+    <p>芒格说不能用一把锤子敲所有钉子。这只基金<strong>硬把两个不相关的生意绑在一起</strong>：</p>
+    <table>
+      <tr><th>板块</th><th>占比</th><th>该用什么逻辑看</th><th>说白了</th></tr>
+      <tr><td>白酒</td><td>约 31.5%</td><td>心理学 + 社会学</td><td>酒桌上还流行不流行喝这个牌子</td></tr>
+      <tr><td>养猪链</td><td>约 20.8%</td><td>生物学 + 周期</td><td>母猪存栏去化到哪一步了，猪价啥时候涨</td></tr>
+    </table>
+    <p><strong>后果：这两个方向可能互相抵消。</strong>你判断对了白酒复苏，但猪价在跌，最后收益一场空。
+    这是它和纯白酒基金、纯食品饮料基金<strong>最本质的区别</strong>，也是大多数人买之前没意识到的。</p>
+
+    <h3>🚫 避免愚蠢：买这只基金的人通常怎么亏的</h3>
+    <ul>
+      <li><strong>买错了</strong>——想买"消费复苏"，结果买到"白酒+猪"，家电汽车旅游一点没沾。<span class="tag">最常见</span></li>
+      <li><strong>追高了</strong>——看它7 月单月涨 14.75% 才冲进去，8 月就吃到回落。</li>
+      <li><strong>拿不住</strong>——在-30% 的位置割肉，把长期投资做成了短期亏损。</li>
+      <li><strong>买贵了</strong>——明明有股票账户，却交了 0.80% 申购费买联接基金。</li>
+    </ul>
+    <div class="quote">"我们只是努力不做傻事，而不是努力变得非常聪明。"——上面四条<strong>每一条都能避开</strong>，而避开它们比选对时机重要得多。</div>
+  </div>
+
+  <div class="card">
+    <h2>看图说话</h2>
+
+    <h3>价格走势（母基金月线，近 14 个月）</h3>
+    <div class="svgwrap">
+    <svg width="900" height="250" viewBox="0 0 900 250">
+      <line x1="45" y1="215" x2="880" y2="215" stroke="#dfe3e8"/>
+      <line x1="45" y1="20" x2="45" y2="215" stroke="#dfe3e8"/>
+      <text x="10" y="26" font-size="11" fill="#7b8494">0.90</text>
+      <text x="10" y="122" font-size="11" fill="#7b8494">0.74</text>
+      <text x="10" y="218" font-size="11" fill="#7b8494">0.58</text>
+      <polyline fill="none" stroke="#2563eb" stroke-width="2.5"
+        points="45,88 109,46 173,64 237,64 301,76 365,88 429,112 493,124 557,118 621,100 685,142 749,124 813,46 877,127"/>
+      <circle cx="877" cy="127" r="4.5" fill="#e63946"/>
+      <text x="800" y="150" font-size="12" fill="#e63946" font-weight="600">现价 0.673</text>
+      <circle cx="685" cy="142" r="4" fill="#2a9d8f"/>
+      <text x="640" y="166" font-size="11" fill="#2a9d8f">低点 0.59</text>
+      <circle cx="109" cy="46" r="4" fill="#7b8494"/>
+      <text x="86" y="38" font-size="11" fill="#7b8494">高点 0.88</text>
+      <text x="60" y="236" font-size="11" fill="#7b8494">2025-07</text>
+      <text x="420" y="236" font-size="11" fill="#7b8494">2026-01</text>
+      <text x="820" y="236" font-size="11" fill="#7b8494">2026-08</text>
+    </svg>
+    </div>
+    <p class="sub">一路下坡走了一年，6 月见底 ¥0.59，7 月放量反弹到 ¥0.70，8 月第一天回落到 ¥0.673。</p>
+
+    <h3>各周期涨跌</h3>
+    <div class="svgwrap">
+    <svg width="900" height="210" viewBox="0 0 900 210">
+      <line x1="30" y1="95" x2="880" y2="95" stroke="#c9ced6" stroke-dasharray="4 4"/>
+      <text x="0" y="99" font-size="11" fill="#7b8494">0%</text>
+
+      <rect x="60"  y="65"  width="58" height="30"  fill="#e63946" rx="3"/>
+      <text x="62"  y="58"  font-size="13" fill="#e63946" font-weight="700">+6.09%</text>
+      <text x="66"  y="116" font-size="12" fill="#5b6470">近1月</text>
+
+      <rect x="190" y="95"  width="58" height="42"  fill="#2a9d8f" rx="3"/>
+      <text x="188" y="152" font-size="13" fill="#2a9d8f" font-weight="700">-8.49%</text>
+      <text x="196" y="170" font-size="12" fill="#5b6470">近3月</text>
+
+      <rect x="320" y="95"  width="58" height="78"  fill="#2a9d8f" rx="3"/>
+      <text x="314" y="188" font-size="13" fill="#2a9d8f" font-weight="700">-15.97%</text>
+      <text x="326" y="206" font-size="12" fill="#5b6470">近6月</text>
+
+      <rect x="450" y="95"  width="58" height="82"  fill="#2a9d8f" rx="3"/>
+      <text x="444" y="192" font-size="13" fill="#2a9d8f" font-weight="700">-16.79%</text>
+      <text x="458" y="206" font-size="12" fill="#5b6470">近1年</text>
+
+      <rect x="580" y="95"  width="58" height="100" fill="#2a9d8f" rx="3"/>
+      <text x="574" y="60"  font-size="13" fill="#2a9d8f" font-weight="700">-30.64%</text>
+      <text x="588" y="78"  font-size="12" fill="#5b6470">近3年</text>
+
+      <rect x="710" y="95"  width="58" height="76"  fill="#2a9d8f" rx="3"/>
+      <text x="704" y="60"  font-size="13" fill="#2a9d8f" font-weight="700">-15.34%</text>
+      <text x="716" y="78"  font-size="12" fill="#5b6470">今年以来</text>
+    </svg>
+    </div>
+    <p class="sub">红=涨，绿=跌。<strong>只有最近一个月是红的</strong>，其他周期全绿。</p>
+
+    <h3>前十大重仓股</h3>
+    <div class="svgwrap">
+    <svg width="900" height="300" viewBox="0 0 900 300">
+      <g font-size="13" fill="#1f2328">
+        <text x="0" y="17">伊利股份</text><rect x="100" y="4"width="612" height="17" rx="3" fill="#2563eb"/><text x="722" y="17" font-size="12" fill="#5b6470">10.20%</text>
+        <text x="0" y="45">贵州茅台</text><rect x="100" y="32"  width="590" height="17" rx="3" fill="#2563eb"/><text x="700" y="45" font-size="12" fill="#5b6470">9.83%</text>
+        <text x="0" y="73">五粮液</text><rect x="100" y="60"  width="542" height="17" rx="3" fill="#2563eb"/><text x="652" y="73" font-size="12" fill="#5b6470">9.03%</text>
+        <text x="0" y="101">牧原股份</text><rect x="100" y="88"  width="541" height="17" rx="3" fill="#f0b429"/><text x="651" y="101" font-size="12" fill="#5b6470">9.01%</text>
+        <text x="0" y="129">温氏股份</text><rect x="100" y="116" width="381" height="17" rx="3" fill="#f0b429"/><text x="491" y="129" font-size="12" fill="#5b6470">6.35%</text>
+        <text x="0" y="157">泸州老窖</text><rect x="100" y="144" width="353" height="17" rx="3" fill="#2563eb"/><text x="463" y="157" font-size="12" fill="#5b6470">5.88%</text>
+        <text x="0" y="185">海天味业</text><rect x="100" y="172" width="330" height="17" rx="3" fill="#2563eb"/><text x="440" y="185" font-size="12" fill="#5b6470">5.50%</text>
+        <text x="0" y="213">山西汾酒</text><rect x="100" y="200" width="322" height="17" rx="3" fill="#2563eb"/><text x="432" y="213" font-size="12" fill="#5b6470">5.37%</text>
+        <text x="0" y="241">海大集团</text><rect x="100" y="228" width="212" height="17" rx="3" fill="#f0b429"/><text x="322" y="241" font-size="12" fill="#5b6470">3.54%</text>
+        <text x="0" y="269">东鹏饮料</text><rect x="100" y="256" width="169" height="17" rx="3" fill="#2563eb"/><text x="279" y="269" font-size="12" fill="#5b6470">2.81%</text>
+      </g>
+      <rect x="100" y="284" width="14" height="12" fill="#2563eb"/><text x="120" y="294" font-size="12" fill="#5b6470">吃喝（有品牌护城河）</text>
+      <rect x="290" y="284" width="14" height="12" fill="#f0b429"/><text x="310" y="294" font-size="12" fill="#5b6470">养猪链（纯周期，无护城河）</text>
+    </svg>
+    </div>
+    <p class="sub">前 10 只占 <strong>67.52%</strong>，前20 只占 <strong>85.64%</strong>（持仓清单日期 2026-08-04）。</p>
+    <div class="term">💡 <strong>集中度 85.64%</strong>=把 85 块钱押在 20 家公司上。押对了很爽，押错了很痛——它不像宽基那样"雨露均沾"。</div>
+
+    <h3>费率与规模</h3>
+    <div class="kv">
+      <div><div class="k">管理费</div><div class="v">0.50%<span style="font-size:12px">/年</span></div></div>
+      <div><div class="k">托管费</div><div class="v">0.10%<span style="font-size:12px">/年</span></div></div>
+      <div><div class="k">申购费（A类）</div><div class="v">0.80%</div></div>
+      <div><div class="k">母基金规模</div><div class="v">¥161<span style="font-size:12px">亿</span></div></div>
+      <div><div class="k">股票仓位</div><div class="v">67.33%</div></div>
+      <div><div class="k">日成交额</div><div class="v">¥2.43<span style="font-size:12px">亿</span></div></div>
+    </div>
+    <p class="sub">综合持有成本约 <strong>0.60%/年</strong>，在行业主题基金里算中等偏低，但明显高于宽基（一般 0.15%~0.20%）。</p>
+  </div>
+
+  <div class="card">
+    <h2>基金经理：过蓓蓓</h2>
+    <p>中科大金融工程<strong>博士</strong>，14 年从业，现任汇添富指数与量化投资部<strong>副总监</strong>。
+    <strong>从 2015 年 8 月管到今天，整整 11 年没换人</strong>，任职期间回报 +87.17%。</p>
+    <div class="term">💡 <strong>指数基金的经理不挑股票、不看时机</strong>——指数买啥她就买啥，她的活儿是"抄作业抄得像不像"。
+    实测跟踪偏离只有 0.09 个百分点，<strong>抄得很像，本职工作合格</strong>。<br>
+    所以：<strong>近三年亏 30% 不该怪她</strong>，任职 +87% 也不全是她的功劳——都是指数的锅和功。</div>
+    <p class="sub">她还管着纳斯达克100 ETF、纳指生物科技联接、黄金及贵金属 LOF，是汇添富指数团队的核心骨干。</p>
+  </div>
+
+  <div class="card">
+    <h2>这基金适合谁</h2>
+    <table>
+      <tr><th style="width:38%">你是这样的人</th><th style="width:14%">适配</th><th>为什么</th></tr>
+      <tr><td>看好白酒和猪价长期回暖，能扛住账户亏 30% 不慌</td><td>✅ 适合</td><td>分批买或月月定投，别一次性满仓</td></tr>
+      <tr><td>已有宽基打底，想补一块必需消费敞口</td><td>✅ 适合</td><td>但单一行业别超过股票仓位的 15%</td></tr>
+      <tr><td>没有股票账户，只能在银行/支付宝买</td><td>✅ 可以</td><td>这才是买联接基金的正当理由</td></tr>
+      <tr><td>想赌它继续反弹，快进快出</td><td>⚠️ 谨慎</td><td>趋势没确认，卖压还在，0.80% 申购费也吃掉短线利润</td></tr>
+      <tr><td>打算持有不到 1 年</td><td>⚠️ 换 C 类</td><td>A 类前端收 0.80%，短期持有不划算</td></tr>
+      <tr><td>有股票账户，想省成本</td><td>⚠️ 直接买 ETF</td><td>母基金 sz159928 折溢价只 +0.06%，比交 0.80% 申购费划算得多</td></tr>
+      <tr><td>想覆盖"全部消费"（含家电汽车旅游）</td><td>❌ 不适合</td><td>它<strong>完全不含可选消费</strong>，你需要另外配</td></tr>
+      <tr><td>受不了账户亏超过 20%</td><td>❌ 不适合</td><td>-38.41% 是真实发生过的，不是假设</td></tr>
+      <tr><td>只想买白酒，不想碰猪</td><td>❌ 不适合</td><td>20.8% 的养猪链躲不开，去找纯白酒基金</td></tr>
+    </table>
+    <div class="term">💡 <strong>A 类和 C 类怎么选</strong>：打算拿 <strong>1 年以上选A 类</strong>（一次性交 0.80% 申购费，之后不再收）；
+    <strong>1 年以内选 C 类</strong>（免申购费，但按天收销售服务费）。</div>
+  </div>
+
+  <div class="card">
+    <h2>评分明细与扣分理由</h2>
+    <table>
+      <tr><th>维度</th><th>得分</th><th>扣分理由</th></tr>
+      <tr><td>能力圈清晰度</td><td>14 / 20</td><td>「主要消费」名称容易被误读为全部消费，实际不含可选消费</td></tr>
+      <tr><td>护城河质量</td><td>13 / 20</td><td>白酒有定价权，但 20.8% 的养猪链是纯周期、无护城河</td></tr>
+      <tr><td>安全边际</td><td>16 / 20</td><td>52周26% 分位、PE 20.5倍，有折扣但非极度低估</td></tr>
+      <tr><td>长期持有性</td><td>9 / 15</td><td>最大回撤 -38.41%，多数人拿不住；但经理与规模稳定加分</td></tr>
+      <tr><td>最坏情况可承受度</td><td>11 / 15</td><td>必需消费不会归零，有下限；但下跌持续三年之久</td></tr>
+      <tr><td>费率友好度</td><td>7 / 10</td><td>0.60%/年中等偏低，但 A 类 0.80% 申购费不利短期；有更省的场内替代</td></tr>
+      <tr><td colspan="2"><strong>合计 62 / 90</strong></td><td><strong>归一化后 62 分</strong>（评分基于 90% 权重覆盖）</td></tr>
+    </table>
+    <p class="sub">⚠️ 因缺少同类排名与夏普比率数据，「业绩相对优劣」无法评分，已从权重中剔除并重新归一化。</p>
+  </div>
+
+  <div class="card">
+    <h2>数据来源与缺失项</h2>
+    <p class="sub"><strong>来源</strong>：腾讯自选股行情数据接口（母 ETF / 标的指数 / 成份股口径）ㆍ
+    <strong>行情时间戳</strong>：2026-08-05ㆍ<strong>持仓清单日期</strong>：2026-08-04</p>
+    <h3>⚠️ 以下数据本次拿不到（原因：本机未配置 JY_API_KEY）</h3>
+    <ul>
+      <li>联接基金 A 类份额自己的净值序列、规模与份额</li>
+      <li><strong>同类排名分位</strong>（无法判断它在同类基金中排第几）</li>
+      <li><strong>夏普比率、年化波动率、Beta、信息比率</strong></li>
+      <li>持有人结构（个人 / 机构占比）——接口返回全0，属数据缺失，非真实值</li>
+      <li>基金公司管理总规模与财务数据</li>
+      <li>官方复权净值历史序列（接口报错，业绩趋势改用月线 K 线推演）</li>
+    </ul>
+    <p class="sub">要补齐以上数据：到 gildata.com/products/datamap 申请 JY_API_KEY，配置 <code>jy-financedata-api</code> 后重跑即可。</p>
+  </div>
+
+  <div class="foot">
+    本报告由 AI 基于公开数据生成，仅供参考，<strong>不构成任何投资建议</strong>。<br>
+    核心数据为母基金口径替代，与联接基金 A 类份额存在系统性偏差。<br>
+    基金投资有风险，过往业绩不代表未来表现。投资者应根据自身风险承受能力独立决策。<br>
+    数据可能存在延迟或误差，请以基金公司官方披露为准。
+  </div>
+
+</div>
+</body>
+</html>
