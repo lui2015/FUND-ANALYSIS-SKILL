@@ -56,6 +56,29 @@
 
 评分**必须给出扣分理由**。数据缺失的维度不给分、不填 0，而是从权重中剔除并重新归一化。
 
+### 「杀利润 / 杀估值 / 还估值债」判别
+
+同样是「跌了 40%」，性质可以完全不同——这是安全边际维度最需要的证据，也是本 Skill 相对普通指标罗列的核心增量：
+
+| 股价 | PE | 利润 | 结论 |
+|---|---|---|---|
+| 跌 | **反升** | 崩 | ⚠️ **杀利润**：跌了但没变便宜，最危险 |
+| 平/小涨 | 压缩 | 涨 | ✅ **还估值债**：赚钱靠盈利而非炒作 |
+| 跌 | **创新低** | 稳 | 💡 **杀估值**：基本面没崩，崩的是情绪 |
+
+实测样例（恒生科技指数，PE 取 30 只成分股中位数）：
+
+| 年份 | 收盘 | PE 中位 | 归母净利中位 |
+|---|---|---|---|
+| 2021 | 5671 (-32.7%) | 22.6 | 24.3 亿港元 |
+| 2022 | 4129 (-27.2%) | **33.1** ⚠️ | 20.8 亿（12 家亏损） |
+| 2023 | 3764 (-8.8%) | 19.1 | 59.6 亿（+187%） |
+| 2024 | 4468 (+18.7%) | 20.4 | **71.7 亿** |
+| 2025 | 5516 (+23.5%) | 20.4 | 53.3 亿 |
+| 26至今 | 4198 (-23.9%) | **17.6** ★五年最低 | 年报未出 |
+
+2022 年指数跌 27% 而 PE 反而升到 33.1，是因为**利润塌得比股价快**——那年「便宜」是错觉。而 2026 年这次 PE 降到五年最低、利润中位数仍高于 21/22 年、亏损家数更少，属**杀估值而非杀利润**。
+
 ---
 
 ## 安装
@@ -107,11 +130,30 @@ mcporter config add jy-financedata-api  --url "https://api.gildata.com/mcp-serve
 mcporter config add jy-financedata-tool --url "https://api.gildata.com/mcp-servers/aidata-assistant-srv-tool?token=<你的KEY>"
 ```
 
-### 方案 B：内置行情通道（无需鉴权，自动降级）
+### 方案 B：westock CLI（无需鉴权，自动降级）
 
 按**母 ETF / 标的指数**口径分析。拿得到概况、费率、各周期收益与回撤、重仓股权重、52周分位、PE/PB、基金经理履历；**拿不到**同类排名与夏普比率等场外专有指标。
 
-降级时报告顶部会强制显示**黄色口径警示条**，说明数据替代与全部缺失项。
+```bash
+westock search <名称> --type etf     # 定位代码
+westock etf profile  <code>          # 概况、费率、经理、跟踪指数
+westock etf overview <code>          # 各周期收益与回撤、估值历史分位
+westock etf holdings <code>          # 前 20 大重仓（复数 holdings）
+westock quote        <code>          # 现价、52周高低、PE/PB、内外盘
+westock kline <code> --period month --limit 14
+westock news   <code> --limit 8      # 近期动态
+```
+
+**取历年估值 / 利润序列**（用于上面的判别框架）：
+
+```bash
+westock quote <30只成分股> --date 2024-12-31        # 历史日行情自带 PE/PB/市值
+westock finance <代码,最多10个> --type income --limit 24
+```
+
+`finance` 硬约束：**一次最多 10 个代码**、有限流（分批间隔 20 秒可过）、`--limit` 是**期数不是年数**（回溯 5 个年报需 ≥24）。
+
+降级时报告顶部会强制显示**黄色口径警示条**，说明数据替代与全部缺失项。完整命令表与实测坑见 [`references/fund-data-sources.md`](references/fund-data-sources.md)。
 
 ---
 
@@ -132,6 +174,24 @@ mcporter config add jy-financedata-tool --url "https://api.gildata.com/mcp-serve
 
 ---
 
+## 报告结构（九块）
+
+顺序是刻意设计的：**先给数字、再给解读**。用户第一反应是自己看数字再验证你的判断，先给数字是建立信任；倒过来会让人觉得你在替他下结论。
+
+```
+① 顶部卡片：基金名 / 代码 / 综合评分 / 一句话结论（降级时置顶黄色警示条）
+② 关键指标速览：8 张 KPI 卡，每张带历史分位横条 + 大白话判语
+③ 近五年变化：股价 / PE / 利润中位数 三组柱状图
+④ 「先说结论」：3~5 条大白话要点
+⑤ 巴菲特四把尺子：四张卡片（结论 + 数据 + 评级图标）
+⑥ 芒格三件武器：逆向思维 / 多元思维 / 避免愚蠢
+⑦ 数据看图说话：走势 SVG + 重仓股条形 + 各周期收益红绿柱
+⑧ 「这基金适合谁」：✅适合 / ⚠️谨慎 / ❌不适合 三类人群
+⑨ 底部：数据来源、时间戳、缺失项清单、免责声明
+```
+
+---
+
 ## 报告样式
 
 - 单文件 HTML，**CSS/JS 全内联，零外部依赖**，断网可正常打开
@@ -141,7 +201,12 @@ mcporter config add jy-financedata-tool --url "https://api.gildata.com/mcp-serve
 - 货币符号 `¥`
 - 术语解释块用浅黄底与正文区分
 
-示例报告见 [`examples/sample-report-159928.html`](examples/sample-report-159928.html)（汇添富中证主要消费ETF联接A，评分 62/100）。
+### 示例报告
+
+| 示例 | 标的 | 评分 | 看点 |
+|---|---|---|---|
+| [`sample-report-513010.html`](examples/sample-report-513010.html) | 恒生科技ETF易方达 | 68/100 | **完整版**：含关键指标卡与近五年三联图，演示「杀估值 vs 杀利润」判别 |
+| [`sample-report-159928.html`](examples/sample-report-159928.html) | 汇添富中证主要消费ETF联接A | 62/100 | 降级口径示例，演示**母 ETF 映射**与缺失项标注 |
 
 ---
 
@@ -150,11 +215,25 @@ mcporter config add jy-financedata-tool --url "https://api.gildata.com/mcp-serve
 ```
 ├── SKILL.md       # 技能主文件（工作流 + 框架 + 翻译层）
 ├── references/
-│   ├── fund-data-sources.md# 数据源与实测命令对照表
+│   ├── fund-data-sources.md# 数据源与实测命令对照表（westock CLI）
 │   ├── scoring-methodology.md            # 六维评分标准与扣分细则
 │   └── html-report-template.md  # HTML 骨架 + SVG 速查 + 自检清单
 └── examples/
-    └── sample-report-159928.html     # 示例报告
+    ├── sample-report-513010.html     # 恒生科技ETF易方达（68/100）
+    └── sample-report-159928.html     # 汇添富消费ETF联接A（62/100）
+```
+
+---
+
+## 交付前自检
+
+生成报告后跑一遍，四项必须全过：
+
+```bash
+grep -c -E 'src="http|href="http|cdn\.' report.html                    # 外部依赖 = 0
+grep -c -E '业绩承压|静待花开|逢低布局|震荡蓄势|长期看好' report.html    # 禁用词 = 0
+grep -o 'class="term"' report.html | wc -l                             # 术语解释块 ≥ 5
+grep -o 'e63946' report.html | wc -l                                   # 涨红跌绿未用反
 ```
 
 ---
