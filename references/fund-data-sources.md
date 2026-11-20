@@ -7,10 +7,14 @@
   ↳ 唯一能拿到场外基金专有数据：A/C份额净值序列、同类排名分位、夏普比率、持有人结构
   ↳ 前提：需 JY_API_KEY（https://www.gildata.com/products/datamap申请）
 
-方案 B（降级，实测有效）：westock-data（内置，无需鉴权）
-  ↳ 按母ETF / 标的指数口径分析，拿不到场外专有指标
+方案 B（降级，实测有效）：westock CLI（内置，无需鉴权）
+  ↳ 只覆盖【场内交易品种】；按母ETF / 标的指数口径分析，拿不到场外专有指标
 
-方案 C（补充）：WebSearch
+方案 C（2026-11 新增）：天天基金公开 HTTP 接口
+  ↳ 场外开放式基金、QDII-LOF、真实净值序列与复权日涨跌；折溢价率查证也走这里
+  ↳ 触发条件：westock search 查不到该基金，或需要净值而非场内价格
+
+方案 D（补充）：WebSearch
   ↳ 仅用于基金经理访谈、公司新闻、行业观点等非结构化信息，不用于取数
 ```
 
@@ -99,6 +103,12 @@ command -v westock && westock --help   # 先确认已安装
 | **港股列位不同** | 港股返回列顺序与 A 股不一致 | **按表头名解析，绝不按固定列号硬解析** |
 | 早年样本偏少 | 批量查历史 PE 时部分公司未上市 | 属正常，需在图注标注每年样本数 |
 | 名称搜不中 | 全称搜不到 | 换关键词或直接用 6 位代码搜（如 `westock search 513010`） |
+| **裸代码报错** | `etf profile 510310` 报「不支持的…代码」 | `search` 返回 `sh510310` 等**带市场前缀**的 code，原样传下去 |
+| **A 股利润字段名** | 套港股/美股教程取不到值 | A 股用 `NPParentCompanyOwners`（年报 12-31 累计）/ `NPParentCompanyOwnersTTM`；美股用 `NetIncome_Q`（季度，百万 USD） |
+| **批量上限记混** | 以为 quote 也限 10 只 | `quote <codes> --date` 一次 **30 只可过**；只有 `finance` 限 10 只、需间隔 20 秒 |
+| **规模口径不一致** | `profile.totalAsset` 520 亿 vs `quote` 场内市值 1059 亿 | 选定一个口径写明，**不混用、不推断**，差异列入缺失项 |
+| **成分股漂移** | 用当前前 30 大回溯 2021 年，结论偏乐观 | 图注标注「按当前权重选取、存在幸存者偏差、仅代表今天的龙头」，不可与全指数口径替代 |
+| **净值披露滞后** | 净值到 11-18，行情到 11-20 | 分别标日期，**不做外推** |
 
 ### 方案 B 的能力边界（报告中必须声明）
 
@@ -115,6 +125,113 @@ command -v westock && westock --help   # 先确认已安装
 
 ---
 
+## 方案 C：天天基金公开接口（2026-11 实测）
+
+所有请求需 `User-Agent`；`pingzhongdata` 用 `Referer: https://fund.eastmoney.com/`，
+F10 页面用 `Referer: https://fundf10.eastmoney.com/`。
+
+| 用途 | 端点 | 备注 |
+|---|---|---|
+| 净值 / 规模 / 经理 / 雷达 | `https://fund.eastmoney.com/pingzhongdata/<code>.js` | 单行压缩 JS，用正则按变量名取值 |
+| 费率 / 规模 / 成立日 / 基准 | `https://fundf10.eastmoney.com/jbgk_<code>.html` | HTML，strip tag 后取字段 |
+| 阶段涨幅 / 同类排名 | `https://fundf10.eastmoney.com/FundArchivesDatas.aspx?type=jdzf&code=<code>` | 返回 `var apidata={content:"<div>…"` |
+| 经理履历 | `https://fundf10.eastmoney.com/jjjl_<code>.html` | 任职回报、任期 |
+| 季报 / 半年报持仓 | `...?type=jjcc&code=<code>` | tbody 常为空，用 fund-v2 `fund_evaluator.py` 抓完整文件 |
+
+### `pingzhongdata` 解析
+
+```python
+import re, json
+s = open("pz.js", encoding="utf-8", errors="ignore").read()
+def grab(k):
+    m = re.search(k + r'\s*=\s*(\[.*?\]|\{.*?\}|"[^"]*")\s*;', s)  # 外层单引号！
+    return json.loads(m.group(1))
+nw = grab("Data_netWorthTrend")     # [{x: ms时间戳, y: 单位净值, equityReturn: 复权日涨跌%, unitMoney}]
+ac = grab("Data_ACWorthTrend")      # [[ms, 累计净值], ...]
+```
+
+⚠️ **坑**：文件是**单行**，不能按行匹配 `^var`；正则外层用**单引号**包裹，
+内层含 `"[^"]*"` 双引号才不会截断字符串。`Data_fluctuationScale` 是 **dict**（含 categories + series），
+不是 list，别对它做切片。`Data_fundSharesPositions` 可能为占位/估算值，与季报冲突时以季报为准。
+
+**实测返回空的端点**（12 字节，别再试）：`type=zcpz`、`type=hycc`、`type=tsdata`、
+`F10DataApi.aspx?type=hycc`。`https://fundgz.1234567.com.cn/js/<code>.js` 对部分 QDII/LOF 返回 404。
+
+### 复权净值重建（必做）
+
+```python
+import datetime as dt, statistics as st
+def day(ms): return dt.datetime.fromtimestamp(ms/1000, dt.timezone.utc).strftime("%Y-%m-%d")
+
+v, adj = 1.0, []
+for r in nw:                                  # 全序列、按时间正序
+    v *= (1 + (r.get("equityReturn") or 0) / 100)
+    adj.append((day(r["x"]), v))
+cur = nw[-1]["y"]                             # 当前单位净值
+scale = cur / adj[-1][1]                      # 换算到当前口径（元）
+curve = [(d, v*scale) for d, v in adj if d >= "2021-11-20"]
+median = st.median([v for _, v in curve])
+```
+
+**为什么必须这么做**：510310 在 **2024-09-19** 单位净值 1.5977 → 3.2021（名义 +100.42%），
+但当日 `equityReturn` = +0.16% —— 这是**份额折算**；`Data_ACWorthTrend` 仍是折算前口径
+（末值 2.1023 < 单位净值 3.9451），两者不同步。直接对单位净值取中位数会混合两种口径。
+换算后：中位数 **3.6671 元**，当前 3.9451 元（**+7.58%**），五年区间 2.9121~4.9331 元，1214 个交易日。
+
+### 折溢价率查证
+
+```bash
+# ① 判断有无场内份额（看 QuoteID / Classify）
+curl -s -H "User-Agent: Mozilla/5.0" \
+ "https://searchapi.eastmoney.com/api/suggest/get?input=160213&type=14&token=D43BF722C8E33BDC906FB84D85E326E8&count=15"
+# ② 有场内再看行情（以下对 160213 均失败，仅作对照）
+curl -s -H "Referer: https://finance.sina.com.cn/" "https://hq.sinajs.cn/list=sz160213"
+curl -s "https://qt.gtimg.cn/q=sz160213"
+curl -s "https://push2.eastmoney.com/api/qt/stock/get?ut=fa5...&fltt=2&fields=f43,f58,f60&secid=0.160213"
+# ③ 集思录 QDII 榜（有 discount_rt，但 rp 参数无效、恒 20 条）
+curl -s -X POST -H "Referer: https://www.jisilu.cn/" \
+ "https://www.jisilu.cn/data/qdii/qdii_list/E?___jsl=LST___t=<ms>" -d "rp=100&page=1"
+```
+
+| 返回 | 含义 |
+|---|---|
+| `0.<code>` Fund + `150.<code>` OTCFUND 两条 | 真 LOF，有场内价，可算折溢价 |
+| 只有 `150.<code>` OTCFUND | 主流行情源无场内报价 → **折溢价率数学上无法计算** |
+
+**实测对照**：161127 有两条登记；160213 只有 OTCFUND 一条 → 新浪返回空串、腾讯静默丢码、
+push2 `data:null`（注意 `1.160213` 是债券「20河南05」，同名别混）。
+查不到时按 SKILL.md 要求写清查证过程 + 对用户的实际影响，不填估算值。
+
+### 表头名解析（westock 表格通用）
+
+多代码 + `--date` 的响应会**缺少部分列**导致列位漂移，必须按表头名取值：
+
+```python
+def parse_md_tables(text):
+    blocks, cur = [], []
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("|"): cur.append(s)
+        elif cur: blocks.append(cur); cur = []
+    if cur: blocks.append(cur)
+    out = []
+    for b in blocks:
+        if len(b) < 2: continue
+        hdr = [x.strip() for x in b[0].split("|")][1:-1]
+        rows = [dict(zip(hdr, [x.strip() for x in l.split("|")][1:-1]))
+                for l in b[2:] if len([x.strip() for x in l.split("|")][1:-1]) == len(hdr)]
+        out.append((hdr, rows))
+    return out
+```
+
+### 方案 C 的能力边界
+
+**拿得到**：真实单位/累计净值序列、复权日涨跌、规模与费率、阶段涨幅与同类排名、经理履历、季报持仓。
+**拿不到**：同类排名分位、夏普比率、年化波动率（仍需聚源）；行业配置明细、持有人结构（接口返回空）。
+**注意**：净值 T+1 披露，日期常比行情接口晚 1~2 个交易日，**标注日期、不做外推**。
+
+---
+
 ## 取数纪律
 
 1. **查后即写**：先记录原始返回，再引用，不凭记忆写数字
@@ -122,3 +239,7 @@ command -v westock && westock --help   # 先确认已安装
 3. **时间戳**：每个数据标注截止日期（行情日期 ≠ 持仓清单日期，需分别标注）
 4. **缺失显式化**：写「⚠️ 数据缺失（原因：需 JY_API_KEY）」，不用 0、不估算、不留白
 5. **禁止虚构**：基金经理言论、公司评价必须来自真实查询或搜索结果
+6. **口径打架两个都摆**：两个真实口径给出相反结论时，同时呈现 + 解释成因 + 给「正确说法」，
+   禁止只挑好看的那个；详见 `case-studies.md`
+7. **统计前先看完整输出**：禁止用 `sed -n '6,60p'` / `head` 截断后再统计只数或合计
+   （曾因此把 100 只持仓误判为 52 只）

@@ -117,7 +117,7 @@ git clone https://github.com/lui2015/FUND-ANALYSIS-SKILL.git ~/.workbuddy/skills
 
 ## 数据源
 
-采用**双通道**设计，缺少商业数据授权时自动降级，保证随时可用。
+采用**多通道**设计，缺少商业数据授权时自动降级，保证随时可用。
 
 ### 方案 A：恒生聚源 MCP（数据最全）
 
@@ -155,6 +155,30 @@ westock finance <代码,最多10个> --type income --limit 24
 
 降级时报告顶部会强制显示**黄色口径警示条**，说明数据替代与全部缺失项。完整命令表与实测坑见 [`references/fund-data-sources.md`](references/fund-data-sources.md)。
 
+### 方案 C：天天基金公开接口（2026-11 新增）
+
+场外开放式基金与 QDII-LOF **不在 westock 行情库**（例 320011 诺安中小盘精选混合A、
+160213 国泰纳斯达克100），需要真实净值序列时也走这里。请求需带 `User-Agent` 与对应 `Referer`。
+
+```bash
+curl -s -H "User-Agent: Mozilla/5.0" -H "Referer: https://fund.eastmoney.com/" \
+  https://fund.eastmoney.com/pingzhongdata/<code>.js     # 净值/规模/经理/equityReturn
+curl -s -H "Referer: https://fundf10.eastmoney.com/" \
+  https://fundf10.eastmoney.com/jbgk_<code>.html        # 费率/规模/基准
+```
+
+**两条硬规则**：
+
+1. **净值必须先复权重建**。分红或份额折算会让单位净值突然跳变——510310 在 2024-09-19
+   单位净值 1.5977 → 3.2021（名义 +100.42%），但当日真实涨跌只有 +0.16%。
+   用 `equityReturn` 累乘还原，再换算到当前口径，才能算「五年净值中位数」。
+2. **折溢价率先确认有没有场内份额**。用东财 searchapi 看 `QuoteID`：
+   同时有 `0.<code>`（Fund）与 `150.<code>`（OTCFUND）才是真 LOF；
+   只有 OTCFUND 一条时没有场内价，折溢价率**数学上无法计算**，必须写清查证过程与对用户的实际影响。
+
+完整端点表、失效端点清单与复权代码见 [`references/fund-data-sources.md`](references/fund-data-sources.md)，
+实战踩坑记录见 [`references/case-studies.md`](references/case-studies.md)。
+
 ---
 
 ## 数据纪律（硬性红线）
@@ -181,7 +205,7 @@ westock finance <代码,最多10个> --type income --limit 24
 ```
 ① 顶部卡片：基金名 / 代码 / 综合评分 / 一句话结论（降级时置顶黄色警示条）
 ② 关键指标速览：8 张 KPI 卡，每张带历史分位横条 + 大白话判语
-③ 近五年变化：股价 / PE / 利润中位数 三组柱状图
+③ 近五年变化：股价 / PE / 利润中位数 / 复权净值趋势 四组图（第四张用虚线标出五年净值中位数）
 ④ 「先说结论」：3~5 条大白话要点
 ⑤ 巴菲特四把尺子：四张卡片（结论 + 数据 + 评级图标）
 ⑥ 芒格三件武器：逆向思维 / 多元思维 / 避免愚蠢
@@ -205,7 +229,8 @@ westock finance <代码,最多10个> --type income --limit 24
 
 | 示例 | 标的 | 评分 | 看点 |
 |---|---|---|---|
-| [`sample-report-513010.html`](examples/sample-report-513010.html) | 恒生科技ETF易方达 | 68/100 | **完整版**：含关键指标卡与近五年三联图，演示「杀估值 vs 杀利润」判别 |
+| [`sample-report-510310.html`](examples/sample-report-510310.html) | 沪深300ETF易方达 | 79/100 | **最新完整版**：四组图 + 五年净值中位数，演示「口径打架」与三参照系 |
+| [`sample-report-513010.html`](examples/sample-report-513010.html) | 恒生科技ETF易方达 | 68/100 | 含关键指标卡与近五年三联图，演示「杀估值 vs 杀利润」判别 |
 | [`sample-report-159928.html`](examples/sample-report-159928.html) | 汇添富中证主要消费ETF联接A | 62/100 | 降级口径示例，演示**母 ETF 映射**与缺失项标注 |
 
 ---
@@ -215,10 +240,12 @@ westock finance <代码,最多10个> --type income --limit 24
 ```
 ├── SKILL.md       # 技能主文件（工作流 + 框架 + 翻译层）
 ├── references/
-│   ├── fund-data-sources.md# 数据源与实测命令对照表（westock CLI）
+│   ├── fund-data-sources.md           # 数据源与实测命令对照表（westock / 天天基金）
 │   ├── scoring-methodology.md            # 六维评分标准与扣分细则
-│   └── html-report-template.md  # HTML 骨架 + SVG 速查 + 自检清单
+│   ├── html-report-template.md           # HTML 骨架 + SVG 速查 + 自检清单
+│   └── case-studies.md                   # 实战踩坑记录（口径打架/份额折算/季报口径）
 └── examples/
+    ├── sample-report-510310.html     # 沪深300ETF易方达（79/100，含净值趋势图）
     ├── sample-report-513010.html     # 恒生科技ETF易方达（68/100）
     └── sample-report-159928.html     # 汇添富消费ETF联接A（62/100）
 ```
@@ -227,7 +254,7 @@ westock finance <代码,最多10个> --type income --limit 24
 
 ## 交付前自检
 
-生成报告后跑一遍，四项必须全过：
+生成报告后跑一遍，基础四项必须全过：
 
 ```bash
 grep -c -E 'src="http|href="http|cdn\.' report.html                    # 外部依赖 = 0
@@ -235,6 +262,34 @@ grep -c -E '业绩承压|静待花开|逢低布局|震荡蓄势|长期看好' re
 grep -o 'class="term"' report.html | wc -l                             # 术语解释块 ≥ 5
 grep -o 'e63946' report.html | wc -l                                   # 涨红跌绿未用反
 ```
+
+2026-11 起再加四项：**HTML 标签配平**、**SVG 坐标落在 viewBox 内**、
+**图上标注极值与曲线采样点一致**、**浏览器对单个图表元素截图核对**。
+完整清单见 [`references/html-report-template.md`](references/html-report-template.md)。
+
+---
+
+## 更新日志
+
+### 2026-11-20
+
+- 报告第 ③ 块从**三组柱状图**扩为**四组图**，新增「近五年复权净值趋势 + 五年净值中位数」
+- 新增**方案 C（天天基金公开接口）**：覆盖场外基金、QDII-LOF、真实净值序列与折溢价率查证
+- 明确**复权净值重建**为必做步骤，记录份额折算污染（510310 / 2024-09-19）
+- 新增**「口径打架」硬性要求**：两个真实口径结论相反时，两个都摆 + 解释成因 + 给「正确说法」
+- 新增**三参照系**（一年 52 周分位 / 五年净值中位数 / 估值口径）与安全边际扣分规则的对应
+- SKILL.md 补：ETF 代码市场前缀、A 股与美股 finance 字段名、按表头名解析、
+  `quote` 30 只 vs `finance` 10 只上限、成分股漂移、规模口径不一致
+- 新增 `references/case-studies.md`（5 个实战案例）与示例报告 `sample-report-510310.html`
+- 自检清单扩充：标签配平、SVG 坐标、极值一致性、渲染截图验证
+
+### 2026-10-09
+
+- 报告结构升级为九块，新增关键指标速览与近五年三联图
+
+### 2026-08-05
+
+- 初版：巴菲特·芒格框架 + 小白友好 HTML 报告
 
 ---
 
